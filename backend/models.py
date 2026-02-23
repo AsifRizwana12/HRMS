@@ -29,14 +29,16 @@ def add_employee(employee_id, full_name, email, department):
             query = "INSERT INTO employees (employee_id, full_name, email, department) VALUES (%s, %s, %s, %s)"
             cursor.execute(query, (employee_id, full_name, email, department))
             connection.commit()
-            return True
+            return True, "Employee added successfully"
         except Error as e:
             print(f"Error adding employee: {e}")
-            return False
+            if e.errno == 1062:
+                return False, "Employee ID or Email already exists."
+            return False, f"Database error: {str(e)}"
         finally:
             cursor.close()
             connection.close()
-    return False
+    return False, "Database connection failed"
 
 def get_all_employees():
     connection = get_db_connection()
