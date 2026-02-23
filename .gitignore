@@ -1,0 +1,15 @@
+# Backend
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+*.log
+
+# Misc
+.DS_Store
+.gemini/
