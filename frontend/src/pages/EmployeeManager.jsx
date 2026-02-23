@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { UserPlus, Trash2, Loader2 } from 'lucide-react';
-
-const API_BASE_URL = 'http://localhost:5001/api';
+import API_BASE_URL from '../config';
 
 const EmployeeManager = ({ showToast }) => {
     const [employees, setEmployees] = useState([]);
@@ -112,7 +111,7 @@ const EmployeeManager = ({ showToast }) => {
                                     <td>{emp.email}</td>
                                     <td>{emp.department}</td>
                                     <td>
-                                        <button className="btn btn-danger" onClick={() => handleDelete(emp.employee_id)}>
+                                        <button className="btn btn-danger" onClick={() => handleDelete(emp.employee_id)} disabled={submitting}>
                                             <Trash2 size={16} /> Delete
                                         </button>
                                     </td>
