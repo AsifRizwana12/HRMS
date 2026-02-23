@@ -1,13 +1,19 @@
 import mysql.connector
 from mysql.connector import Error
+import os
+from dotenv import load_dotenv
+
+# Load environment variables for production readiness
+load_dotenv()
 
 def get_db_connection():
     try:
         connection = mysql.connector.connect(
-            host='localhost',
-            database='hrms_lite',
-            user='root',
-            password='Rizwana@123'
+            host=os.getenv('DB_HOST', 'localhost'),
+            database=os.getenv('DB_NAME', 'hrms_lite'),
+            user=os.getenv('DB_USER', 'root'),
+            password=os.getenv('DB_PASSWORD', 'Rizwana@123'),
+            port=int(os.getenv('DB_PORT', 3306))
         )
         if connection.is_connected():
             return connection
