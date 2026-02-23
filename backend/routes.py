@@ -23,12 +23,10 @@ def create_employee():
         return jsonify({"error": "Invalid email format"}), 400
     
     # Check for duplicate employee ID or email is handled by DB constraints (simplified here)
-    success, message = add_employee(data['employee_id'], data['full_name'], data['email'], data['department'])
-    if success:
-        return jsonify({"message": message}), 201
+    if add_employee(data['employee_id'], data['full_name'], data['email'], data['department']):
+        return jsonify({"message": "Employee added successfully"}), 201
     else:
-        status_code = 409 if "already exists" in message else 500
-        return jsonify({"error": message}), status_code
+        return jsonify({"error": "Failed to add employee. Employee ID or Email might already exist."}), 409
 
 @api.route('/employees', methods=['GET'])
 def list_employees():

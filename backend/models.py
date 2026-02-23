@@ -3,41 +3,27 @@ from mysql.connector import Error
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from the .env file in the same directory
+# Load environment variables
 basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '.env'))
 
 def get_db_connection():
     try:
-        host = os.getenv('DB_HOST')
-        user = os.getenv('DB_USER')
-        password = os.getenv('DB_PASSWORD')
-        database = os.getenv('DB_NAME')
-        port = os.getenv('DB_PORT', '3306')
-        
-        if not all([host, user, password, database]):
-            missing = [k for k, v in {'DB_HOST': host, 'DB_USER': user, 'DB_PASSWORD': password, 'DB_NAME': database}.items() if not v]
-            return None, f"Missing environment variables: {', '.join(missing)}"
-
         connection = mysql.connector.connect(
-            host=host,
-            user=user,
-            password=password,
-            database=database,
-            port=int(port),
+            host="mysql-3e96a47e-asifrizwana826-f2c3.c.aivencloud.com",
+            port=18244,
+            user="avnadmin",
+            password=os.getenv("DB_PASSWORD"),
+            database="defaultdb",
             ssl_disabled=False
         )
         if connection.is_connected():
             return connection, None
-        return None, "Connection established but not active"
     except Error as e:
         error_msg = f"Connection failed: {str(e)}"
         print(error_msg)
         return None, error_msg
-    except Exception as e:
-        error_msg = f"Unexpected error: {str(e)}"
-        print(error_msg)
-        return None, error_msg
+    return None, "Database connection failed"
 
 def add_employee(employee_id, full_name, email, department):
     connection, error = get_db_connection()
