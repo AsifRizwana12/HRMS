@@ -3,8 +3,9 @@ from mysql.connector import Error
 import os
 from dotenv import load_dotenv
 
-# Load environment variables for production readiness
-load_dotenv()
+# Load environment variables from the .env file in the same directory
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env'))
 
 def get_db_connection():
     try:
@@ -28,6 +29,7 @@ def get_db_connection():
         )
         if connection.is_connected():
             return connection, None
+        return None, "Connection established but not active"
     except Error as e:
         error_msg = f"Connection failed: {str(e)}"
         print(error_msg)

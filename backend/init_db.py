@@ -3,7 +3,9 @@ from mysql.connector import Error
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load environment variables from the .env file in the same directory
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env'))
 
 def init_db():
     try:
