@@ -8,21 +8,37 @@ load_dotenv()
 
 def get_db_connection():
     try:
+        host = os.getenv('DB_HOST')
+        user = os.getenv('DB_USER')
+        password = os.getenv('DB_PASSWORD')
+        database = os.getenv('DB_NAME')
+        port = os.getenv('DB_PORT', '3306')
+        
+        if not all([host, user, password, database]):
+            missing = [k for k, v in {'DB_HOST': host, 'DB_USER': user, 'DB_PASSWORD': password, 'DB_NAME': database}.items() if not v]
+            return None, f"Missing environment variables: {', '.join(missing)}"
+
         connection = mysql.connector.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            database=os.getenv('DB_NAME', 'hrms_lite'),
-            user=os.getenv('DB_USER', 'root'),
-            password=os.getenv('DB_PASSWORD', 'Rizwana@123'),
-            port=int(os.getenv('DB_PORT', 3306))
+            host=host,
+            user=user,
+            password=password,
+            database=database,
+            port=int(port),
+            ssl_disabled=False
         )
         if connection.is_connected():
-            return connection
+            return connection, None
     except Error as e:
-        print(f"Error while connecting to MySQL: {e}")
-        return None
+        error_msg = f"Connection failed: {str(e)}"
+        print(error_msg)
+        return None, error_msg
+    except Exception as e:
+        error_msg = f"Unexpected error: {str(e)}"
+        print(error_msg)
+        return None, error_msg
 
 def add_employee(employee_id, full_name, email, department):
-    connection = get_db_connection()
+    connection, error = get_db_connection()
     if connection:
         cursor = connection.cursor()
         try:
@@ -38,10 +54,10 @@ def add_employee(employee_id, full_name, email, department):
         finally:
             cursor.close()
             connection.close()
-    return False, "Database connection failed"
+    return False, error or "Database connection failed"
 
 def get_all_employees():
-    connection = get_db_connection()
+    connection, error = get_db_connection()
     employees = []
     if connection:
         cursor = connection.cursor(dictionary=True)
@@ -56,7 +72,7 @@ def get_all_employees():
     return employees
 
 def delete_employee(employee_id):
-    connection = get_db_connection()
+    connection, error = get_db_connection()
     if connection:
         cursor = connection.cursor()
         try:
@@ -72,7 +88,7 @@ def delete_employee(employee_id):
     return False
 
 def mark_attendance(employee_id, date, status):
-    connection = get_db_connection()
+    connection, error = get_db_connection()
     if connection:
         cursor = connection.cursor()
         try:
@@ -88,10 +104,10 @@ def mark_attendance(employee_id, date, status):
         finally:
             cursor.close()
             connection.close()
-    return False, "Database connection failed"
+    return False, error or "Database connection failed"
 
 def get_attendance_records(employee_id):
-    connection = get_db_connection()
+    connection, error = get_db_connection()
     records = []
     if connection:
         cursor = connection.cursor(dictionary=True)
